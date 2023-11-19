@@ -1,0 +1,14 @@
+{
+    "name": "hangman",
+    "version": "1.0.0",
+    "engine": {
+      "node": "^18.18"
+    },
+    "type": "module",
+    "main": "hangman.cjs",
+    "author": "Shane",
+    "repository": {
+      "type": "git",
+      "url": "https://github.com/NotCodeium/Hangman.git"
+    }
+  }
