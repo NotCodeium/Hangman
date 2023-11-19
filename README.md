@@ -3,7 +3,8 @@ Simple hangman game using javascript
 
 
 
-To start the game, open the terminal and type in the command: node hangman.js   and start guessing!
+To start the game, open the terminal and type in the command: node hangman.js  
+and start guessing!
 
 The theme of the game is: Video games,  so I hope you like games! 
 
