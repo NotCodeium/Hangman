@@ -50,15 +50,15 @@ const startGame = () => {
     const guessedLetters = [];
     let incorrectGuesses = 0;
 
-    console.log('Welcome to Hangman!');
+    console.log('WELCOME!!!  LETS PLAY SOME HANGMAN!!');
     console.log('Press ctrl + c to stop the game.');
 
     const playAgain = () => {
-      rl.question('Do you want to play again? (yes/no): ', answer => {
+      rl.question('Wanna try again? (yes/no): ', answer => {
         if (answer.toLowerCase() === 'yes') {
           playRound();
         } else {
-          console.log('Thanks for playing!');
+          console.log('TY FOR PLAYING!!!');
           console.log('Wins:', wins);
           console.log('Losses:', losses);
           rl.close();
