@@ -89,7 +89,7 @@ const startGame = () => {
           incorrectGuesses++;
           drawStickman(incorrectGuesses);
 
-          if (incorrectGuesses === 6) {
+          if (incorrectGuesses === 4) {
             console.log('Game Over!  The word was:', targetWord);
             losses++;
             playAgain();
