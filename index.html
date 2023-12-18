@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hangman Game</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="hangman-container">
+    <div id="word-display"></div>
+    <div id="guessed-letters"></div>
+    <div id="incorrect-guesses"></div>
+    <div id="result-message"></div>
+    <div id="letter-buttons"></div>
+      <!-- Add buttons for each letter -->
+
+    <div id="counters">
+      <p>Wins: <span id="winCount">0</span></p>
+      <p>Losses: <span id="lossCount">0</span></p>
+      <p>Winstreak: <span id="winStreak">0</span></p>
+    </div>
+      <button onclick="redoGame()">Redo Game</button>
+    </div>
+
+
+  <script src="hangman.js">
+  </script>
+</body>
+</html>

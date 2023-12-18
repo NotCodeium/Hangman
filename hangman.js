@@ -1,110 +1,124 @@
-import readline from 'readline';
-import wordBank from './word-bank.js';
+const wordBank = ['Mario', 'Zelda', 'Halo', 'Fortnite', 'Minecraft', 'Skyrim', 'Overwatch', 'Pacman', 'Sonic', 'Pokemon', 'Tetris', 'Starcraft', 'Fallout', 'Warcraft', 'Destiny', 'Assassin', 'Portal', 'Resident', 'Metroid', 'MetalGear', 'League', 'Borderlands', 'Bioshock', 'MassEffect', 'FinalFantasy', 'KingdomHearts', 'StreetFighter', 'MortalKombat', 'GrandTheftAuto', 'DarkSouls'];
+let targetWord = '';
+let guessedLetters = [];
+let incorrectGuesses = 0;
+let winCount = 0;
+let lossCount = 0;
+let winStreak = 0;
+let gameOver = false; // Added flag to track game over state
 
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout
-});
-
-const getRandomWord = () => {
+function getRandomWord() {
   const randomIndex = Math.floor(Math.random() * wordBank.length);
   return wordBank[randomIndex].toLowerCase();
-};
+}
 
-const displayWord = (word, guessedLetters) => {
-  let displayedWord = '';
-  for (const char of word) {
-    if (guessedLetters.includes(char)) {
-      displayedWord += char;
+function displayWord() {
+  return targetWord
+    .split('')
+    .map(char => (guessedLetters.includes(char) ? char : '_'))
+    .join(' ');
+}
+
+function isGameWon() {
+  return targetWord.split('').every(char => guessedLetters.includes(char));
+}
+
+function drawStickman() {
+  const stickman = [
+    '   ____',
+    '   |  |',
+    `   ${incorrectGuesses >= 1 ? 'O' : ' '}`,
+    `   ${incorrectGuesses >= 2 ? '|' : ' '}`,
+    `   ${incorrectGuesses >= 3 ? '/' : ' '} ${incorrectGuesses >= 4 ? '\\' : ' '}`,
+  ];
+  return stickman.join('\n');
+}
+
+function updateDisplay() {
+  document.getElementById('word-display').textContent = displayWord();
+  document.getElementById('guessed-letters').textContent = `Guessed Letters: ${guessedLetters.join(', ')}`;
+  document.getElementById('incorrect-guesses').innerHTML = drawStickman();
+  updateCounters();
+}
+
+function showResult(message) {
+  document.getElementById('result-message').textContent = message;
+}
+
+function updateCounters() {
+  document.getElementById('winCount').textContent = winCount;
+  document.getElementById('lossCount').textContent = lossCount;
+  document.getElementById('winStreak').textContent = winStreak;
+}
+
+function startGame() {
+  targetWord = getRandomWord();
+  guessedLetters = [];
+  incorrectGuesses = 0;
+  gameOver = false; // Reset the game over state
+  updateDisplay();
+  showResult('');
+}
+
+function makeGuess(letter) {
+  if (gameOver) return; // Check if the game is over before processing a new guess
+
+  const guessedLetter = letter.toLowerCase();
+
+  if (!guessedLetter.match(/[a-z]/)) {
+    alert('Please enter a valid letter.');
+    return;
+  }
+
+  if (guessedLetters.includes(guessedLetter)) {
+    alert('You guessed that one already.');
+    return;
+  }
+
+  guessedLetters.push(guessedLetter);
+
+  if (targetWord.includes(guessedLetter)) {
+    if (isGameWon()) {
+      winCount++;
+      winStreak++;
+      gameOver = true; // Set the game over state
+      showResult(`YOOO! YOU WON!!! The word was: ${targetWord}`);
     } else {
-      displayedWord += '_';
+      updateDisplay();
+    }
+  } else {
+    incorrectGuesses++;
+
+    if (incorrectGuesses === 4) {
+      lossCount++;
+      winStreak = 0;
+      gameOver = true; // Set the game over state
+      showResult(`Game Over! The word was: ${targetWord}`);
+    } else {
+      updateDisplay();
     }
   }
-  return displayedWord;
-};
+}
 
-const drawStickman = (incorrectGuesses) => {
-  const stickman = [
-    '   O',
-    '   |',
-    '  /|\\',
-    '  / \\',
-  ];
+function redoGame() {
+  startGame();
+}
 
-  console.log('\nIncorrect Guesses:');
-  for (let i = 0; i < incorrectGuesses; i++) {
-    console.log(stickman[i]);
+function createLetterButtons() {
+  const letterButtonsContainer = document.getElementById('letter-buttons');
+  for (let i = 97; i <= 122; i++) {
+    const letter = String.fromCharCode(i);
+    const letterButton = document.createElement('button');
+    letterButton.textContent = letter;
+    letterButton.classList.add('letter-button');
+    letterButton.addEventListener('click', () => makeGuess(letter));
+    letterButtonsContainer.appendChild(letterButton);
+    if (i % 9 === 0) {
+      letterButtonsContainer.appendChild(document.createElement('br')); // Add line break every 9 buttons
+    }
   }
-};
+}
 
-const isGameWon = (word, guessedLetters) => {
-  return word.split('').every(char => guessedLetters.includes(char));
-};
-
-const startGame = () => {
-  let wins = 0;
-  let losses = 0;
-
-  const playRound = () => {
-    const targetWord = getRandomWord();
-    const guessedLetters = [];
-    let incorrectGuesses = 0;
-
-    console.log('WELCOME!!!  LETS PLAY SOME HANGMAN!!');
-    console.log('Press ctrl + c to stop the game.');
-
-    const playAgain = () => {
-      rl.question('Wanna try again? (yes/no): ', answer => {
-        if (answer.toLowerCase() === 'yes') {
-          playRound();
-        } else {
-          console.log('TY FOR PLAYING!!!');
-          console.log('Wins:', wins);
-          console.log('Losses:', losses);
-          rl.close();
-        }
-      });
-    };
-
-    const playOneRound = () => {
-      console.log('\nWord:', displayWord(targetWord, guessedLetters));
-      console.log('Guessed Letters:', guessedLetters.join(', '));
-      console.log('Incorrect Guesses Left:', 4 - incorrectGuesses);
-
-      rl.question('Guess a letter: ', answer => {
-        const guessedLetter = answer.toLowerCase();
-
-        if (guessedLetters.includes(guessedLetter)) {
-          console.log('You guessed that one already...');
-        } else if (targetWord.includes(guessedLetter)) {
-          guessedLetters.push(guessedLetter);
-          if (isGameWon(targetWord, guessedLetters)) {
-            console.log('YOOO! YOU WON!!!  The word was:', targetWord);
-            wins++;
-            playAgain();
-          } else {
-            playOneRound();
-          }
-        } else {
-          incorrectGuesses++;
-          drawStickman(incorrectGuesses);
-
-          if (incorrectGuesses === 4) {
-            console.log('Game Over!  The word was:', targetWord);
-            losses++;
-            playAgain();
-          } else {
-            console.log('Hey! Look!  A man is being drawn!');
-            playOneRound();
-          }
-        }
-      });
-    };
-
-    playOneRound();
-  };
-
-  playRound();
-};
-
+// Initial start
 startGame();
+createLetterButtons();
